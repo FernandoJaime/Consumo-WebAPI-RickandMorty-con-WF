@@ -1,3 +1,5 @@
+using RickandMorty.Views;
+
 namespace RickandMorty
 {
     internal static class Program
@@ -11,7 +13,7 @@ namespace RickandMorty
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new PagesCharacters());
+            Application.Run(new Menu());
         }
     }
 }

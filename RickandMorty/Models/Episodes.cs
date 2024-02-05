@@ -8,6 +8,7 @@ namespace RickandMorty.Models
 {
     public class Episodes
     {
-        public List<Episode>? results { get; set; }
+        public List<Episode>? results { get; set; } = new List<Episode>();
+        public Info info { get; set; }
     }
 }

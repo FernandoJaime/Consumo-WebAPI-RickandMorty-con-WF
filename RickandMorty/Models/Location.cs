@@ -12,7 +12,7 @@ namespace RickandMorty.Models
         public string name { get; set; }
         public string type { get; set; }
         public string dimension { get; set; }
-        public Character[] residents { get; set; }
+        public string[] residents { get; set; }
         public string url { get; set; }
         public string created { get; set; }
     }

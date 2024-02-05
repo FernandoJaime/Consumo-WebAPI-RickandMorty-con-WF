@@ -19,6 +19,6 @@ namespace RickandMorty.Models
         public string created { get; set; }
         public Location location { get; set; }
         public Origin origin { get; set; }
-        public Episode[] episodes { get; set; }
+        public string[] episode { get; set; }
     }
 }

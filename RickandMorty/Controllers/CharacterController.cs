@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace RickandMorty.Controllers
 {
@@ -47,13 +48,13 @@ namespace RickandMorty.Controllers
             }
         }
 
-        // Metodo que regresa todos los characters que tengan esa letra o letras en el nombre.
-        public async Task<Characters> GetForName(string name)
+        // Metodo que regresa todos los characters que apliquen los filtros.
+        public async Task<Characters> GetForAllFilters(string valor1, string valor2, string valor3)
         {
             try
             {
                 Characters characters = new Characters();
-                HttpResponseMessage response = await client.GetAsync("https://rickandmortyapi.com/api/character?name=" + name);
+                HttpResponseMessage response = await client.GetAsync($"https://rickandmortyapi.com/api/character/?name={valor1}&status={valor2}&gender={valor3}");
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
@@ -62,37 +63,7 @@ namespace RickandMorty.Controllers
                 }
                 else if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    // El nombre solicitado no existe, devolver un mensaje.
-                    throw new Exception("No existe personaje con ese nombre o letra en su nombre.");
-                }
-                else
-                {
-                    throw new Exception("Error al obtener los datos. Código de estado: " + response.StatusCode);
-                }
-
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        // Metodo que regresa todos los characters que tengan esa letra o letras en el nombre con ese status especifico.
-        public async Task<Characters> GetForNameAndStatus(string name, string status)
-        {
-            try
-            {
-                Characters characters = new Characters();
-                HttpResponseMessage response = await client.GetAsync($"https://rickandmortyapi.com/api/character?name={name}&status={status}");
-                if (response.IsSuccessStatusCode)
-                {
-                    string content = await response.Content.ReadAsStringAsync();
-                    characters = JsonSerializer.Deserialize<Characters>(content); // Deserializo.
-                    return characters;
-                }
-                else if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    throw new Exception($"No existe personaje que se encuentre {status} con ese nombre o letra en su nombre.");
+                    throw new Exception($"No existe personaje que coincida con este filtro aplicado.");
                 }
                 else
                 {

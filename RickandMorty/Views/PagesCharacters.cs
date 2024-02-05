@@ -1,5 +1,6 @@
 using RickandMorty.Controllers;
 using RickandMorty.Models;
+using RickandMorty.Views;
 
 namespace RickandMorty
 {
@@ -15,6 +16,13 @@ namespace RickandMorty
             instance = new Characters();
         }
 
+        // Metodo que abre la informacion del personaje.
+        private void OpenInfoCharacter(Character character)
+        {
+            InfoCharacter infoCharacter = new InfoCharacter(character);
+            infoCharacter.ShowDialog();
+        }
+
         // Metodo que carga las imagenes de los personajes atraves de su lista.
         private void LoadImages(List<Character> characters)
         {
@@ -28,13 +36,15 @@ namespace RickandMorty
                 pictureBox.Size = new Size(201, 130);
                 pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
                 PanelDeImages.Controls.Add(pictureBox); // Agrego el PictureBox al contenedor.
+
+                pictureBox.Click += (sender, e) => OpenInfoCharacter(character); // Agrego un evento click al PictureBox.
             }
         }
 
         // Metodo verificacion de campos vacios.
         private bool CheckCampos()
         {
-            if (string.IsNullOrEmpty(txtName.Text))
+            if (txtName.Enabled == true && string.IsNullOrEmpty(txtName.Text))
             {
                 MessageBox.Show("El campo del nombre no puede estar vacio si quiere aplicar el filtro", "Atencion", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtName.Text = "";
@@ -47,14 +57,18 @@ namespace RickandMorty
                 ComboStatus.Focus();
                 return false;
             }
+            if (ComboGender.Enabled == true && string.IsNullOrEmpty(ComboGender.Text))
+            {
+                MessageBox.Show("El campo del gender no puede estar vacio si quiere aplicar el filtro", "Atencion", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                ComboGender.Focus();
+                return false;
+            }
             return true;
         }
 
         // Metodo Load de la pagina.
         private async void PagesCharacters_Load(object sender, EventArgs e)
         {
-            CheckTodos.Checked = true;
-            ComboStatus.Enabled = false;
             instance = await controller.GetAll();
             LoadImages(instance.results);
         }
@@ -66,21 +80,10 @@ namespace RickandMorty
             {
                 if (CheckCampos())
                 {
-                    if (ComboStatus.Enabled == true)
+                    instance = await controller.GetForAllFilters(txtName.Text, ComboStatus.Text, ComboGender.Text);
+                    if (instance.results != null)
                     {
-                        instance = await controller.GetForNameAndStatus(txtName.Text, ComboStatus.Text);
-                        if (instance.results != null)
-                        {
-                            LoadImages(instance.results);
-                        }
-                    }
-                    else if (CheckTodos.Checked == true)
-                    {
-                        instance = await controller.GetForName(txtName.Text);
-                        if (instance.results != null)
-                        {
-                            LoadImages(instance.results);
-                        }
+                        LoadImages(instance.results);
                     }
                 }
             }
@@ -95,7 +98,14 @@ namespace RickandMorty
         private void btnQuitarFiltros_Click(object sender, EventArgs e)
         {
             txtName.Text = "";
+            txtName.Enabled = false;
+            CheckName.Checked = false;
             ComboStatus.SelectedIndex = -1;
+            ComboStatus.Enabled = false;
+            CheckStatus.Checked = false;
+            ComboGender.SelectedIndex = -1;
+            ComboGender.Enabled = false;
+            CheckGender.Checked = false;
             PagesCharacters_Load(sender, e);
         }
 
@@ -134,17 +144,49 @@ namespace RickandMorty
         }
 
         // Metodo para manejar el filtro de status.
-        private void CheckTodos_CheckedChanged(object sender, EventArgs e)
+
+        private void CheckName_CheckedChanged(object sender, EventArgs e)
         {
-            if (CheckTodos.Checked)
+            if (CheckName.Checked)
+            {
+                txtName.Enabled = true;
+            }
+            else
+            {
+                txtName.Enabled = false;
+                txtName.Text = "";
+            }
+        }
+
+        private void CheckStatus_CheckedChanged(object sender, EventArgs e)
+        {
+            if (CheckStatus.Checked)
+            {
+                ComboStatus.Enabled = true;
+            }
+            else
             {
                 ComboStatus.Enabled = false;
                 ComboStatus.SelectedIndex = -1;
             }
+        }
+
+        private void CheckGender_CheckedChanged(object sender, EventArgs e)
+        {
+            if (CheckGender.Checked)
+            {
+                ComboGender.Enabled = true;
+            }
             else
             {
-                ComboStatus.Enabled = true;
+                ComboGender.Enabled = false;
+                ComboGender.SelectedIndex = -1;
             }
+        }
+
+        private void btnVolverMenu_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }
