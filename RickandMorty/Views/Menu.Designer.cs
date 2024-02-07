@@ -43,7 +43,7 @@
             btnInit.ForeColor = Color.Lime;
             btnInit.Location = new Point(142, 298);
             btnInit.Name = "btnInit";
-            btnInit.Size = new Size(86, 33);
+            btnInit.Size = new Size(89, 33);
             btnInit.TabIndex = 7;
             btnInit.Text = "Ingresar";
             btnInit.UseVisualStyleBackColor = false;
